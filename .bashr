@@ -1,0 +1,14 @@
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+
+if [ -f ~/.bash_aliases ]; then
+  . ~/.bash_aliases
+fi
+
+if [ -f ~/.bash_variables ]; then
+  . ~/.bash_variables
+fi
+
+if [[ $TERM == "xterm" ]]; then
+  exec tmux
+fi
+[[ -s "/home/renra/.gvm/scripts/gvm" ]] && source "/home/renra/.gvm/scripts/gvm"
