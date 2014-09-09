@@ -176,6 +176,7 @@ au BufNewFile,BufRead *.go set filetype=javascript
 au Filetype php,html,xml,xsl,eruby source ~/.vim/scripts/closetag.vim
 au Filetype rb source ~/.vim/scripts/reek.vim
 
-inoremap <Leader>s <span class="italic">
+" inoremap <Leader>s <span class="italic">
 
 set hidden
+set bs=2
