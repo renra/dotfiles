@@ -1,68 +1,55 @@
-" All system-wide defaults are set in $VIMRUNTIME/debian.vim (usually just
-" /usr/share/vim/vimcurrent/debian.vim) and sourced by the call to :runtime
-" you can find below.  If you wish to change any of those settings, you should
-" do it in this file (/etc/vim/vimrc), since debian.vim will be overwritten
-" everytime an upgrade of the vim packages is performed.  It is recommended to
-" make changes after sourcing debian.vim since it alters the value of the
-" 'compatible' option.
+filetype plugin on
+source ~/.vim/matchit/plugin/matchit.vim
+source ~/.vim/editorconfig-vim-master/autoload/editorconfig.vim
+source ~/.vim/editorconfig-vim-master/plugin/editorconfig.vim
 
-" This line should not be removed as it ensures that various options are
-" properly set to work with the Vim-related packages available in Debian.
-runtime! debian.vim
+" call plug#begin('~/.vim/plugged')
+" Plug 'elmcast/elm-vim'
+" call plug#end()
 
-" Uncomment the next line to make Vim more Vi-compatible
-" NOTE: debian.vim sets 'nocompatible'.  Setting 'compatible' changes numerous
-" options, so any other options should be set AFTER setting 'compatible'.
-"set compatible
+let b:match_words = '\v<class>|<do>|<def>:<end>'
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
+" Make it easy to navigate errors (and vimgreps)...
+"
+nnoremap <RIGHT>         :cnf<CR><C-G>
+nnoremap <LEFT>          :cpf<CR><C-G>
+
+" Not working seemingly
+"set iskeyword=a-z,A-Z,48-57,_,.,-,>
+
+set ignorecase
+set smartcase
+set incsearch
+
+" :hi CursorLine   cterm=NONE ctermbg=darkred ctermfg=white guibg=darkred guifg=white
+:hi CursorColumn cterm=NONE ctermbg=darkmagenta ctermfg=white guibg=darkmagenta guifg=white
+
+set nocursorline
+set nocursorcolumn
+
+" set foldmethod=indent
+" set foldopen=all
+
+if has('persistent_undo')
+  set undofile
+  set undodir=$HOME/.VIM_UNDO_FILES
+  set undolevels=5000
+endif
+
+nnoremap / /\v
+
 syntax on
-
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
-set background=dark
-
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
-" Uncomment the following to have Vim load indentation rules and plugins
-" according to the detected filetype.
-if has("autocmd")
-  filetype plugin indent off
-endif
-
-" The following are commented out as they cause vim to behave a lot
-" differently from regular Vi. They are highly recommended though.
-set showcmd		" Show (partial) command in status line.
-set showmatch		" Show matching brackets.
-"set ignorecase		" Do case insensitive matching
-"set smartcase		" Do smart case matching
-set incsearch		" Incremental search
-set autowrite		" Automatically save before commands like :next and :make
-"set hidden             " Hide buffers when they are abandoned
-set mouse=a		" Enable mouse usage (all modes)
-
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
-
-
 set nocompatible
 set noswapfile
-set encoding=utf-8
-set smartcase
 
+set encoding=utf-8
 set nosmartindent
 set autoindent
 set indentexpr=""
 
 " Display file name
 set modeline
+set ruler
 set ls=2
 
 set shiftround
@@ -74,24 +61,31 @@ exec 'set tabstop='    .s:tabwidth
 exec 'set shiftwidth=' .s:tabwidth
 exec 'set softtabstop='.s:tabwidth
 
-set cc=80
-set scrolloff=500
-highlight ColorColumn ctermbg=magenta
+highlight ColorColumn ctermbg=darkmagenta
+" call matchadd('ColorColumn', '\%>80v', 100)
+set cc=81
 
 set splitright
 
 set wrap
 autocmd BufWritePre * :%s/\s\+$//e
+autocmd BufRead,BufNewfile *.elm setlocal filetype=haskell
+
+au BufNewFile,BufRead *.hbs set filetype=html
+au BufNewFile,BufRead *.handlebars set filetype=html
+au BufNewFile,BufRead *.scala set filetype=java
+au BufNewFile,BufRead *.module set filetype=php
 
 set wildmenu
 set background=dark
 set hlsearch
 
-inoremap <esc> <nop>
-inoremap <Up> <nop>
-inoremap <down> <nop>
-inoremap <left> <nop>
-inoremap <right> <nop>
+" Only for training
+"inoremap <esc> <nop>
+"inoremap <Up> <nop>
+"inoremap <down> <nop>
+"inoremap <left> <nop>
+"inoremap <right> <nop>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -99,11 +93,7 @@ vnoremap > >gv
 nnoremap j gj
 nnoremap k gk
 
-if has('mouse')
-  set mouse=ar
-end
-
-nnoremap <c-l> :nohlsearch<CR>
+nnoremap <c-l> :nohlsearch<CR>    "
 
 nnoremap <c-d> x
 nnoremap + ddkP
@@ -119,8 +109,6 @@ inoremap <c-h> <Left>
 inoremap <c-j> <esc>gja
 inoremap <c-k> <esc>gka
 inoremap <c-l> <Right>
-noremap <c-a> ^
-noremap <c-e> <end>
 inoremap <c-a> <Esc>^i
 inoremap <c-e> <end>
 
@@ -164,19 +152,16 @@ nnoremap <Space> i
 inoremap <C-@> <Esc>
 vnoremap <C-@> <Esc>
 
-" filetype off
-" filetype plugin indent off
-" set rtp+=$GOROOT/misc/vim
-" filetype plugin indent on
-" syntax on
+augroup HelpInTabs
+  autocmd!
+  autocmd BufEnter *.txt call HelpInNewTab()
+augroup END
 
-au BufNewFile,BufRead *.ejs set filetype=html
-au BufNewFile,BufRead *.handlebars set filetype=html
-au BufNewFile,BufRead *.go set filetype=javascript
-au Filetype php,html,xml,xsl,eruby source ~/.vim/scripts/closetag.vim
-au Filetype rb source ~/.vim/scripts/reek.vim
+" set matchpairs+=do:end
 
-" inoremap <Leader>s <span class="italic">
-
-set hidden
-set bs=2
+" Converts help windows to tabs. Courtesy of Damian Conway
+function! HelpInNewTab()
+  if &buftype == 'help'
+    execute "normal \<C-W>T"
+  endif
+endfunction
